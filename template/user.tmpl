@@ -1,0 +1,31 @@
+{{ define "User" }}
+
+  {{ template "Header" (printf "User - %s" .Username) }}
+
+    {{ template "Menu" "read" }}
+
+    <main class="col-sm-12" style="margin-top: 80px;">
+      <h2>Employees</h2>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Position</th>
+            </tr>
+          </thead>
+          <tbody class="employees">
+            <tr>
+              <td>{{ .ID }}</td>
+              <td>{{ .Username }}</td>
+              <td>{{ .Position }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+
+  {{ template "footer"  }}
+
+{{ end }}

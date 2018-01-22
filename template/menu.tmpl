@@ -1,0 +1,32 @@
+{{ define "Menu"}}
+
+<nav class="navbar navbar-toggleable-md navbar-inverse fixed-top bg-inverse">
+  <button class="navbar-toggler navbar-toggler-right hidden-lg-up" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  <a class="navbar-brand" href="/">CRUD Example</a>
+  <div class="collapse navbar-collapse">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item {{if eq . "create" }}active{{end}}">
+        <a class="nav-link" href="/createUser">Create</a>
+      </li>
+      <li class="nav-item {{if eq . "read" }}active{{end}}">
+        <a class="nav-link" href="/">Read</a>
+      </li>
+      <li class="nav-item {{if eq . "update" }}active{{end}}">
+        <a class="nav-link" href="/updateUser">Update</a>
+      </li>
+      <li class="nav-item {{if eq . "delete" }}active{{end}}">
+        <a class="nav-link" href="/deleteUser">Delete</a>
+      </li>
+    </ul>
+    {{if eq . "read" }}
+      <form action="/user" class="form-inline my-2 my-lg-0">
+        <input class="form-control mr-sm-2" type="text" name="id" placeholder="Search">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      </form>
+    {{end}}
+  </div>
+</nav>
+
+{{ end }}

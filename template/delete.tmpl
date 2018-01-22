@@ -1,0 +1,41 @@
+{{ define "Delete" }}
+
+  {{ template "Header" "Delete user" }}
+
+    {{ template "Menu" "delete" }}
+
+    <main class="col-sm-12" style="margin-top: 80px;">
+      <h2>Delete employees</h2>
+      <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="width: 60px;">#</th>
+                <th class="text-center">Name</th>
+                <th class="text-center">Position</th>
+                <th style="width: 122px"></th>
+              </tr>
+            </thead>
+          </table>
+          <table class="table">
+            <tbody>
+            {{ range . }}
+              <form action="/delete" method="POST">
+                <tr>
+                  <td style="width: 60px">{{ .ID }} <input type="hidden" name="id" value="{{ .ID }}"></td>
+                  <td>{{ .Username }}</td>
+                  <td>{{ .Position }}</td>
+                  <td style="width: 122px"><button type="submit" class="btn btn-primary">Delete user</button></td>
+                </tr>
+              </form>
+            {{ end }}
+            </tbody>
+          </table>
+      </div>
+    </main>
+
+    {{ template "Modal" }}
+
+  {{ template "Footer"  }}
+
+{{ end }}

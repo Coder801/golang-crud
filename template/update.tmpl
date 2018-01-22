@@ -1,0 +1,41 @@
+{{ define "Update" }}
+
+  {{ template "Header" "Update user" }}
+
+    {{ template "Menu" "update" }}
+
+    <main class="col-sm-12" style="margin-top: 80px;">
+      <h2>Update employees</h2>
+      <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="width: 60px;">#</th>
+                <th class="text-center">Name</th>
+                <th class="text-center">Position</th>
+                <th style="width: 122px"></th>
+              </tr>
+            </thead>
+          </table>
+          <table class="table">
+            <tbody>
+            {{ range . }}
+              <form action="/update" method="POST">
+                <tr>
+                  <td style="width: 60px"><input type="text" name="id" value="{{ .ID }}" class="form-control"></td>
+                  <td><input type="text" name="username" value="{{ .Username }}" class="form-control"></td>
+                  <td><input type="text" name="position" value="{{ .Position }}" class="form-control"></td>
+                  <td style="width: 122px"><button type="submit" class="btn btn-primary">Update user</button></td>
+                </tr>
+              </form>
+            {{ end }}
+            </tbody>
+          </table>
+      </div>
+    </main>
+
+    {{ template "Modal" }}
+
+  {{ template "Footer"  }}
+
+{{ end }}
