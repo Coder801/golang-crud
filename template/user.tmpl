@@ -26,6 +26,13 @@
       </div>
     </main>
 
+    <script>
+      fetch('http://localhost/list')
+        .then(data => {
+          console.log(data)
+        })
+    </script>
+
   {{ template "footer"  }}
 
 {{ end }}
