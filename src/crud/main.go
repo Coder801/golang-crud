@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/julienschmidt/httprouter"
 	//"github.com/rs/cors"
+	"github.com/thedevsaddam/renderer"
 	"log"
 	"net/http"
 	"strings"
@@ -19,6 +20,7 @@ type Person struct {
 
 var people []Person
 var tmpl = template.Must(template.ParseGlob("template/*"))
+var rnd = renderer.New()
 
 func main() {
 	r := httprouter.New()
@@ -48,8 +50,9 @@ func main() {
 	r.GET("/list", read)
 	r.GET("/list/:key", read)
 	r.POST("/create", create)
-	r.POST("/update", update)
-	r.POST("/delete", del)
+	r.PUT("/update", update)
+	r.DELETE("/delete", del)
+	r.GET("/jsonp", jsonp)
 
 	// Static files
 	r.ServeFiles("/static/*filepath", http.Dir("static"))
@@ -57,6 +60,24 @@ func main() {
 	// Run server
 	log.Println("Listening...")
 	log.Fatalln(http.ListenAndServe(":8080", r))
+}
+
+func jsonp(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+	queryValues := r.URL.Query()
+	key := queryValues.Get("id")
+	callback := queryValues.Get("callback")
+
+	if key != "" {
+		for _, item := range people {
+			if strings.ToLower(item.ID) == key {
+				fmt.Printf("Get person %v - %v\n", item.Username, item.Position)
+				rnd.JSONP(w, http.StatusOK, callback, item)
+				return
+			}
+		}
+		fmt.Println("Person not found\n")
+	}
+	rnd.JSONP(w, http.StatusOK, callback, people)
 }
 
 func renderList(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
@@ -122,23 +143,32 @@ func create(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 
 func update(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	r.ParseForm()
+	var person Person
+	person.ID = r.FormValue("id")
+	person.Username = r.FormValue("username")
+	person.Position = r.FormValue("position")
+	_ = json.NewDecoder(r.Body).Decode(&person)
+
 	for key, item := range people {
-		if strings.ToLower(item.ID) == r.FormValue("id") {
-			people[key].Username = r.FormValue("username")
-			people[key].Position = r.FormValue("position")
+		if strings.ToLower(item.ID) == person.ID {
+			people[key].Username = person.Username
+			people[key].Position = person.Position
 
 			fmt.Printf("Person %v was update\n", item.Username)
 			json.NewEncoder(w).Encode(people[key])
-			return
 		}
 	}
 }
 
 func del(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 	r.ParseForm()
-	id := r.FormValue("id")
+
+	var person Person
+	person.ID = r.FormValue("id")
+	_ = json.NewDecoder(r.Body).Decode(&person)
+
 	for key, item := range people {
-		if item.ID == id {
+		if item.ID == person.ID {
 			people = append(people[:key], people[key+1:]...)
 			fmt.Printf("Person with 'id' - %v was remove\n", item.ID)
 			json.NewEncoder(w).Encode(item)

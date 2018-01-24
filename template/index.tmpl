@@ -16,17 +16,24 @@
             </tr>
           </thead>
           <tbody class="employees">
-            {{ range . }}
-              <tr>
-                <td>{{ .ID }}</td>
-                <td> {{ .Username }} </td>
-                <td>{{ .Position }} </td>
-              </tr>
-            {{ end }}
+
           </tbody>
         </table>
       </div>
     </main>
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', () => {
+          fetch('/list', {
+            method: 'get'
+          }).then(data => data.json())
+            .then(response => {
+              renderData(response)
+            })
+        });
+
+    </script>
 
     {{ template "Modal" }}
 

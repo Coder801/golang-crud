@@ -1,41 +1,76 @@
-{{ define "Update" }}
+{{ define "Update" }} {{ template "Header" "Update user" }} {{ template "Menu" "update" }}
 
-  {{ template "Header" "Update user" }}
+<style>
+  .table {
+    table-layout: fixed;
+  }
 
-    {{ template "Menu" "update" }}
+  .table .btn {
+    display: inline-block;
+    width: 150px;
+  }
+</style>
 
-    <main class="col-sm-12" style="margin-top: 80px;">
-      <h2>Update employees</h2>
-      <div class="table-responsive">
-          <table class="table">
-            <thead>
-              <tr>
-                <th style="width: 60px;">#</th>
-                <th class="text-center">Name</th>
-                <th class="text-center">Position</th>
-                <th style="width: 122px"></th>
-              </tr>
-            </thead>
-          </table>
-          <table class="table">
-            <tbody>
-            {{ range . }}
-              <form action="/update" method="POST">
-                <tr>
-                  <td style="width: 60px"><input type="text" name="id" value="{{ .ID }}" class="form-control"></td>
-                  <td><input type="text" name="username" value="{{ .Username }}" class="form-control"></td>
-                  <td><input type="text" name="position" value="{{ .Position }}" class="form-control"></td>
-                  <td style="width: 122px"><button type="submit" class="btn btn-primary">Update user</button></td>
-                </tr>
-              </form>
-            {{ end }}
-            </tbody>
-          </table>
-      </div>
-    </main>
+<main class="col-sm-12" style="margin-top: 80px;">
+  <h2>Update employees</h2>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Position</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody class="employees">
+        {{ range . }}
+        <tr>
+          <td class="id">{{ .ID }}</td>
+          <td class="username">{{ .Username }}</td>
+          <td class="position">{{ .Position }}</td>
+          <td class="text-right">
+            <button type="button" class="update btn btn-primary">Update user</button>
+            <button type="button" class="save btn btn-success d-none">Save update</button>
+          </td>
+        </tr>
+        {{ end }}
+      </tbody>
+    </table>
+  </div>
+</main>
 
-    {{ template "Modal" }}
 
-  {{ template "Footer"  }}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
 
-{{ end }}
+    $('.update').click(function(e) {
+      const parent = $(this).parents('tr');
+      $(this).addClass('d-none');
+      $(this).next().removeClass('d-none');
+      $(parent).find('.id, .username, .position').attr("contenteditable", "true")
+    });
+
+    $('.save').click(function(e) {
+      const parent = $(this).parents('tr');
+      $(this).addClass('d-none');
+      $(this).prev().removeClass('d-none');
+      $(parent).find('.id, .username, .position').attr("contenteditable", "false");
+      sendData(parent)
+    })
+
+    const sendData = function(parent) {
+      fetch('/update', {
+          method: 'put',
+          body: JSON.stringify({
+            id: parent.find('.id').text(),
+            username: parent.find('.username').text(),
+            position: parent.find('.position').text(),
+          })
+        })
+    }
+
+  });
+</script>
+
+{{ template "Modal" }} {{ template "Footer" }} {{ end }}

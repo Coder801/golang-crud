@@ -16,23 +16,43 @@
                 <th style="width: 122px"></th>
               </tr>
             </thead>
-          </table>
-          <table class="table">
             <tbody>
             {{ range . }}
-              <form action="/delete" method="POST">
                 <tr>
-                  <td style="width: 60px">{{ .ID }} <input type="hidden" name="id" value="{{ .ID }}"></td>
+                  <td style="width: 60px">{{ .ID }} <input type="hidden" class="id" name="id" value="{{ .ID }}"></td>
                   <td>{{ .Username }}</td>
                   <td>{{ .Position }}</td>
-                  <td style="width: 122px"><button type="submit" class="btn btn-primary">Delete user</button></td>
+                  <td style="width: 122px"><button type="button" class="delete btn btn-danger">Delete user</button></td>
                 </tr>
-              </form>
             {{ end }}
             </tbody>
           </table>
       </div>
     </main>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+
+        $('.delete').click(function(e) {
+          const parent = $(this).parents('tr');
+          sendData(parent);
+          $(parent).hide();
+        });
+
+        const sendData = function(parent) {
+          fetch('/delete', {
+              method: 'delete',
+              body: JSON.stringify({
+                id: parent.find('.id').val()
+              })
+            }).then(data => data.json())
+            .then(response => {
+              alert(`Delete: ID - ${response.id}. Username - ${response.position}. Position - ${response.position}`)
+            })
+        }
+
+      });
+    </script>
 
     {{ template "Modal" }}
 
